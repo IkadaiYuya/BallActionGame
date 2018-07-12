@@ -23,6 +23,7 @@ namespace Player
 		static   WP  instance;
 		static  Resource::SP  Create();
 		//共有する変数はここに追加する
+		string playerMesh;
 	};
 	//-------------------------------------------------------------------
 	class  Object : public  BTask
@@ -45,7 +46,12 @@ namespace Player
 		bool  Finalize();		//「終了」タスク消滅時に１回だけ行う処理
 		void  Render3D_L0();
 		//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+		ML::Vec3 pos;
+		ML::Box3D hitBase;
+		ML::Vec3 angle;
 	public:
 		//追加したい変数・メソッドはここに追加する
+		void Set_Pos(const ML::Vec3&);
+		void Anim_Player();
 	};
 }

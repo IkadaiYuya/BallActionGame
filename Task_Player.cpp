@@ -29,7 +29,9 @@ namespace Player
 		this->res = Resource::Create();
 
 		//★データ初期化
-
+		this->pos = ML::Vec3(0, 0, 0);
+		this->hitBase = ML::Box3D(0, 0, 0, 100, 100, 100);
+		this->angle = ML::Vec3(0, 0, 0);
 		//★タスクの生成
 
 		return  true;
@@ -63,6 +65,18 @@ namespace Player
 	//「3D描画」1フレーム毎に行う処理
 	void  Object::Render3D_L0()
 	{
+	}
+	//-------------------------------------------------------------------
+	//プレイヤの初期位置指定
+	void Object::Set_Pos(const ML::Vec3& pos)
+	{
+		this->pos = pos;
+	}
+	//-------------------------------------------------------------------
+	//アニメーション
+	void Object::Anim_Player()
+	{
+
 	}
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 	//以下は基本的に変更不要なメソッド

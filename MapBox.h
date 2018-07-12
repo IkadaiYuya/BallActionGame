@@ -9,43 +9,42 @@
 #define ChipY 100
 #define ChipZ 100
 
+enum BoxType
+{
+	non = -1,
+	air = 0,
+	floor = 1,
+	wall = 2,
+	ceiling = 3,
+	stairs = 4,
+	start = 5,
+	goal = 6
+};
+
 class Box
 {
 private:
 	//座標
 	ML::Vec3	pos_;
-	//チップサイズ
-	ML::Vec3	chipSize_;
 	//あたり判定
 	ML::Box3D	hitBase_;
-
+	//タイプ
+	BoxType		type_;
 public:
 	//完全初期化用コンストラクタ
 	Box()
 		: pos_(0, 0, 0)
-		, chipSize_(0, 0, 0)
 		, hitBase_(0, 0, 0, 0, 0, 0)
+		, type_(non)
 	{}
-	//マップ初期化用コンストラクタ
-	Box(ML::Vec3& pos, ML::Box3D& hitBase)
-		: pos_(pos)
-		, chipSize_(ChipX, ChipY, ChipZ)
-		, hitBase_(hitBase)
-	{}
-	//床等の初期化用コンストラクタ
-	Box(ML::Vec3& pos, ML::Vec3& chipSize, ML::Box3D& hitBase)
-		: pos_(pos)
-		, chipSize_(chipSize)
-		, hitBase_(hitBase)
-	{}
+	//読み込み用
+	void Initialize_Box(const ML::Vec3&, const ML::Box3D&, const int&);
 	//座標を渡す
 	ML::Vec3 Get_Pos();
-	//チップサイズを渡す
-	ML::Vec3 Get_ChipSize();
-	//スケーリングの数値を渡す
-	ML::Vec3 Get_Scaling();
 	//あたり判定を渡す
 	ML::Box3D Get_HitBase();
+	//種類を渡す
+	BoxType Get_Type();
 	//あたり判定
 	bool Box_HitCheck(const ML::Box3D& hitBase);
 };

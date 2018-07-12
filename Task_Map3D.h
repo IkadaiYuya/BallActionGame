@@ -4,6 +4,7 @@
 //マップ
 //-------------------------------------------------------------------
 #include "GameEngine_Ver3_7.h"
+#include "MapBox.h"
 
 namespace Map3D
 {
@@ -23,6 +24,10 @@ namespace Map3D
 		static   WP  instance;
 		static  Resource::SP  Create();
 		//共有する変数はここに追加する
+		string	floorMesh;
+		string	wallMesh;
+		string	ceilingMesh;
+		string	stairsMesh;
 	};
 	//-------------------------------------------------------------------
 	class  Object : public  BTask
@@ -45,7 +50,13 @@ namespace Map3D
 		bool  Finalize();		//「終了」タスク消滅時に１回だけ行う処理
 		void  Render3D_L0();
 		//変更可◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+		Box		arr[MapSizeY][MapSizeZ][MapSizeX];
+		string  fPath;
 	public:
 		//追加したい変数・メソッドはここに追加する
+		//マップの読み込み
+		bool Map_Load(const string&, int);
+		//あたり判定
+		bool Map_HitCheck(const ML::Box3D&);
 	};
 }

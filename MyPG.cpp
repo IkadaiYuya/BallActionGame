@@ -60,13 +60,15 @@ namespace MyPG
 
 		//キーボードとゲームパッドの入力を受け取るオブジェクトを生成する
 		//キーボードパラメータ
-		DI::AnalogAxisKB	ls = { DIK_LEFT, DIK_RIGHT, DIK_UP, DIK_DOWN };
-		DI::AnalogAxisKB	rs = { DIK_NUMPAD4, DIK_NUMPAD6, DIK_NUMPAD8, DIK_NUMPAD2 };
+		DI::AnalogAxisKB	ls = { DIK_A,DIK_D,DIK_W,DIK_S };/*初期設定：DIK_LEFT, DIK_RIGHT, DIK_UP, DIK_DOWN*/
+		DI::AnalogAxisKB	rs = { DIK_LEFT,DIK_RIGHT,DIK_UP,DIK_DOWN };/*初期設定：DIK_NUMPAD4, DIK_NUMPAD6, DIK_NUMPAD8, DIK_NUMPAD2*/
 		DI::KeyDatas_KB	 key = {
-			{ DIK_Z, DI::But::B1 },{ DIK_X, DI::But::B2 },{ DIK_C, DI::But::B3 },
-			{ DIK_V, DI::But::B4 },{ DIK_A, DI::But::SE },{ DIK_S, DI::But::ST },
-			{ DIK_Q, DI::But::L1 },{ DIK_W, DI::But::R1 },{ DIK_E, DI::But::L2 },
-			{ DIK_R, DI::But::R2 },{ DIK_D, DI::But::L3 },{ DIK_NUMPAD5, DI::But::R3 },
+			{ DIK_LSHIFT, DI::But::B1 },{ DIK_LCONTROL, DI::But::B2 },{ DIK_SPACE, DI::But::B3 },
+			{ DIK_TAB, DI::But::B4 },{ DIK_F, DI::But::SE },{ DIK_G, DI::But::ST },
+			{ DIK_Q, DI::But::L1 },{ DIK_E, DI::But::R1 },{ DIK_Z, DI::But::L2 },
+			{ DIK_X, DI::But::R2 },{ DIK_C, DI::But::L3 },{ DIK_V, DI::But::R3 },
+			{ DIK_1, DI::But::S0 },{ DIK_2, DI::But::S1 },{ DIK_3, DI::But::S2 },
+			{ DIK_4, DI::But::S3 },{ DIK_5, DI::But::S4 },{ DIK_6, DI::But::S5 },
 		};
 		//ゲームパッドパラメータ
 		DI::KeyDatas_GP	but = {

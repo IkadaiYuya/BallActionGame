@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------
 #include  "MyPG.h"
 #include  "Task_Map3D.h"
+#include  "Task_Player.h"
 
 namespace Map3D
 {
@@ -11,6 +12,11 @@ namespace Map3D
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
+		this->wallMesh = "Wall";
+		this->floorMesh = "Floor";
+		this->ceilingMesh = "Ceiling";
+		this->stairsMesh = "Stairs";
+
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -29,7 +35,18 @@ namespace Map3D
 		this->res = Resource::Create();
 
 		//★データ初期化
-
+		//マップの初期化
+		for (int y = 0; y < MapSizeY; ++y)
+		{
+			for (int z = 0; z < MapSizeZ; ++z)
+			{
+				for (int x = 0; x < MapSizeX; ++x)
+				{
+					this->arr[y][z][x] = Box();
+				}
+			}
+		}
+		this->fPath = "";
 		//★タスクの生成
 
 		return  true;
@@ -63,6 +80,68 @@ namespace Map3D
 	//「3D描画」1フレーム毎に行う処理
 	void  Object::Render3D_L0()
 	{
+		ML::Mat4x4 matT, matS;
+		matS.Scaling(100);
+		for (int y = 0; y < MapSizeY; ++y)
+		{
+			for (int z = 0; z < MapSizeZ; ++z)
+			{
+				for (int x = 0; x < MapSizeX; ++x)
+				{
+					matT.Translation(this->arr[y][z][x].Get_Pos());
+					DG::EffectState().param.matWorld = matS * matT;
+					switch (this->arr[y][z][x].Get_Type())
+					{
+
+					}
+				}
+			}
+		}
+	}
+	//-------------------------------------------------------------------
+	//マップの読み込み
+	bool Object::Map_Load(const string& filePath, int y)
+	{
+		ifstream fin(filePath);
+		if (!fin)//読み込み失敗
+		{
+			return false;
+		}
+
+		//次のファイルパスを読み込み
+		fin >> this->fPath;
+		
+		int in = 0;
+		for (int z = 0; z < MapSizeZ; ++z)
+		{
+			for (int x = 0; x < MapSizeX; ++x)
+			{
+				fin >> in;
+
+				ML::Vec3 pos(x * ChipX, y * ChipY, z * ChipZ);
+				ML::Box3D hitBase(0, 0, 0, ChipX, ChipY, ChipZ);
+
+				switch ((BoxType)in)
+				{
+				case BoxType::floor:
+				case BoxType::ceiling:
+				case BoxType::wall:
+				case BoxType::stairs:
+				case BoxType::goal:
+					this->arr[y][z][x].Initialize_Box(pos, hitBase, in);
+					break;
+				case BoxType::start:
+					auto pl = Player::Object::Create(true);
+					pl->Set_Pos(pos + ML::Vec3(ChipX / 2, ChipY / 2, ChipZ / 2));
+				}
+			}
+		}
+	}
+	//-------------------------------------------------------------------
+	//あたり判定
+	bool Object::Map_HitCheck(const ML::Box3D& hit)
+	{
+
 	}
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 	//以下は基本的に変更不要なメソッド
