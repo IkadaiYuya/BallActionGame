@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------
 #include  "MyPG.h"
 #include  "Task_Player.h"
+#include  "Task_Camera.h"
 
 namespace Player
 {
@@ -11,12 +12,15 @@ namespace Player
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
+		this->playerMesh = "PlayerMesh";
+		DG::Mesh_CreateFromSOBFile(this->playerMesh, "./data/mesh/Player.SOB");
 		return true;
 	}
 	//-------------------------------------------------------------------
 	//リソースの解放
 	bool  Resource::Finalize()
 	{
+		DG::Mesh_Erase(this->playerMesh);
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -33,6 +37,7 @@ namespace Player
 		this->hitBase = ML::Box3D(0, 0, 0, 100, 100, 100);
 		this->angle = ML::Vec3(0, 0, 0);
 		//★タスクの生成
+		Camera::Object::Create(true);
 
 		return  true;
 	}
@@ -55,6 +60,14 @@ namespace Player
 	//「更新」1フレーム毎に行う処理
 	void  Object::UpDate()
 	{
+		auto in = DI::GPad_GetState("P1");
+
+		if (in.LStick.volume > 0)
+		{
+			this->pos.x -= in.LStick.axis.y * 5;
+			this->pos.z -= in.LStick.axis.x * 5;
+		}
+
 	}
 	//-------------------------------------------------------------------
 	//「2D描画」1フレーム毎に行う処理
@@ -65,12 +78,23 @@ namespace Player
 	//「3D描画」1フレーム毎に行う処理
 	void  Object::Render3D_L0()
 	{
+		ML::Mat4x4 matT, matS;
+		matT.Translation(this->pos);
+		matS.Scaling(100);
+		DG::EffectState().param.matWorld = matS * matT;
+		DG::Mesh_Draw(this->res->playerMesh);
 	}
 	//-------------------------------------------------------------------
 	//プレイヤの初期位置指定
 	void Object::Set_Pos(const ML::Vec3& pos)
 	{
 		this->pos = pos;
+	}
+	//-------------------------------------------------------------------
+	//
+	ML::Vec3 Object::Get_Pos()
+	{
+		return this->pos;
 	}
 	//-------------------------------------------------------------------
 	//アニメーション

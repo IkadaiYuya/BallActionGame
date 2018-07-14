@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------
 #include  "MyPG.h"
 #include  "Task_Game.h"
+#include  "Task_Map3D.h"
 
 namespace Game
 {
@@ -31,7 +32,8 @@ namespace Game
 		//★データ初期化
 
 		//★タスクの生成
-
+		auto mp = Map3D::Object::Create(true);
+		//mp->Map_Load("");
 		return  true;
 	}
 	//-------------------------------------------------------------------
@@ -39,7 +41,9 @@ namespace Game
 	bool  Object::Finalize()
 	{
 		//★データ＆タスク解放
-
+		ge->KillAll_G("フィールド");
+		ge->KillAll_G("プレイヤ");
+		ge->KillAll_G("カメラ");
 
 		if (!ge->QuitFlag() && this->nextTaskCreate)
 		{
@@ -53,6 +57,12 @@ namespace Game
 	//「更新」1フレーム毎に行う処理
 	void  Object::UpDate()
 	{
+		auto in = DI::GPad_GetState("P1");
+
+		if (in.ST.down)
+		{
+			this->Kill();
+		}
 	}
 	//-------------------------------------------------------------------
 	//「2D描画」1フレーム毎に行う処理

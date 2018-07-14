@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------
 #include  "MyPG.h"
 #include  "Task_Camera.h"
+#include  "Task_Player.h"
 
 namespace Camera
 {
@@ -30,8 +31,8 @@ namespace Camera
 
 		//★データ初期化
 		ge->camera[0] = MyPG::Camera::Create(
-			ML::Vec3(1000.0f, 0.0f, 1000.0f),						//	ターゲット位置
-			ML::Vec3(1000.0f, 1400.0f, -1000.0f),					//	カメラ位置
+			ML::Vec3(0.0f, 0.0f, 0.0f),						//	ターゲット位置
+			ML::Vec3(0.0f, 0.0f, 0.0f),					//	カメラ位置
 			ML::Vec3(0.0f, 1.0f, 0.0f),								//	カメラの上方向ベクトル
 			ML::ToRadian(35), 10.0f, 4000.0f,						//	視野角・視野距離
 			(float)ge->screenWidth / (float)ge->screenHeight);		//	画面比率		
@@ -60,6 +61,9 @@ namespace Camera
 	//「更新」1フレーム毎に行う処理
 	void  Object::UpDate()
 	{
+		auto pl = ge->GetTask_One_G<Player::Object>("プレイヤ");
+		ge->camera[0]->pos = pl->Get_Pos() + ML::Vec3(-1000, 800, 0);
+		ge->camera[0]->target = pl->Get_Pos();
 	}
 	//-------------------------------------------------------------------
 	//「2D描画」1フレーム毎に行う処理

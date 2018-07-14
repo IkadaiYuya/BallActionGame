@@ -6,8 +6,8 @@ namespace MyPG
 	MyGameEngine::MyGameEngine( )
 	:GameEngine(
 	//	環境情報
-		960,							//	画面サイズX
-		540,							//	画面サイズY
+		1920,							//	画面サイズX
+		1080,							//	画面サイズY
 		1,								//	表示倍率
 		1,								//	マルチサンプル(1or2or4)
 		false,							//	フルスクリーンモード

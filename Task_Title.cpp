@@ -12,7 +12,7 @@ namespace Title
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
-		this->meshName = "PlayerMesh";
+		this->meshName = "Player";
 		DG::Mesh_CreateFromSOBFile(this->meshName, "./data/mesh/Player.SOB");
 		this->imageName = "TitleLogoImg";
 		DG::Image_Create(this->imageName, "./data/image/TitleLogo.png");
@@ -65,7 +65,7 @@ namespace Title
 		if (!ge->QuitFlag() && this->nextTaskCreate)
 		{
 			//★引き継ぎタスクの生成
-			//auto nextTask = Game::Object::Create(true);
+			auto nextTask = Game::Object::Create(true);
 		}
 		return  true;
 	}

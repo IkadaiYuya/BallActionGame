@@ -24,10 +24,6 @@ namespace Map3D
 		static   WP  instance;
 		static  Resource::SP  Create();
 		//共有する変数はここに追加する
-		string	floorMesh;
-		string	wallMesh;
-		string	ceilingMesh;
-		string	stairsMesh;
 	};
 	//-------------------------------------------------------------------
 	class  Object : public  BTask
@@ -54,8 +50,10 @@ namespace Map3D
 		string  fPath;
 	public:
 		//追加したい変数・メソッドはここに追加する
+		//マップチップ読み込み
+		bool MapChip_Load(const string);
 		//マップの読み込み
-		bool Map_Load(const string&, int);
+		bool Map_Load(const string);
 		//あたり判定
 		bool Map_HitCheck(const ML::Box3D&);
 	};

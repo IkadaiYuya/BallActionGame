@@ -52,6 +52,7 @@ namespace Player
 	public:
 		//追加したい変数・メソッドはここに追加する
 		void Set_Pos(const ML::Vec3&);
+		ML::Vec3 Get_Pos();
 		void Anim_Player();
 	};
 }

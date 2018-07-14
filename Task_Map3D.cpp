@@ -12,11 +12,6 @@ namespace Map3D
 	//リソースの初期化
 	bool  Resource::Initialize()
 	{
-		this->wallMesh = "Wall";
-		this->floorMesh = "Floor";
-		this->ceilingMesh = "Ceiling";
-		this->stairsMesh = "Stairs";
-
 		return true;
 	}
 	//-------------------------------------------------------------------
@@ -46,7 +41,26 @@ namespace Map3D
 				}
 			}
 		}
+
+		//マップ仮処理
+		for (int z = 0; z < MapSizeZ; ++z)
+		{
+			for (int x = 0; x < MapSizeX; ++x)
+			{
+				ML::Vec3 pos(x * ChipX + ChipX / 2.0f, 0 * ChipY + ChipY / 2.0f, z * ChipZ + ChipZ / 2.0f);
+				ML::Box3D hit(0, 0, 0, ChipX, ChipY, ChipZ);
+				int type = int(box);
+				this->arr[0][z][x].Initialize_Box(pos, hit, type);
+				this->arr[0][z][x].Set_MeshName("Box");
+			}
+		}
+		auto pl = Player::Object::Create(true);
+		ML::Vec3 pos(3 * ChipX + ChipX / 2.0f, 1 * ChipY + ChipY / 2.0f, 3 * ChipZ + ChipZ / 2.0f);
+		pl->Set_Pos(pos);
+
 		this->fPath = "";
+
+		DG::Mesh_CreateFromSOBFile("Box", "./data/mesh/Box.SOB");
 		//★タスクの生成
 
 		return  true;
@@ -56,12 +70,11 @@ namespace Map3D
 	bool  Object::Finalize()
 	{
 		//★データ＆タスク解放
-
+		DG::Mesh_Erase("Box");
 
 		if (!ge->QuitFlag() && this->nextTaskCreate)
 		{
-			//★引き継ぎタスクの生成
-			
+			//★引き継ぎタスクの生成		
 		}
 
 		return  true;
@@ -75,32 +88,51 @@ namespace Map3D
 	//「2D描画」1フレーム毎に行う処理
 	void  Object::Render2D_AF()
 	{
+
 	}
 	//-------------------------------------------------------------------
 	//「3D描画」1フレーム毎に行う処理
 	void  Object::Render3D_L0()
 	{
-		ML::Mat4x4 matT, matS;
-		matS.Scaling(100);
-		for (int y = 0; y < MapSizeY; ++y)
+		auto pl = ge->GetTask_One_G<Player::Object>("プレイヤ");
+		//描画範囲をプレイヤを中心に　マス分に限定
+		int sx, sy, sz, ex, ey, ez;
+		sx = max(0, int(pl->Get_Pos().x / ChipX) - (MapSizeX / MapRenPar));
+		sy = max(0, int(pl->Get_Pos().y / ChipY) - (MapSizeY / MapRenPar));
+		sz = max(0, int(pl->Get_Pos().z / ChipZ) - (MapSizeZ / MapRenPar));
+		ex = min(MapSizeX, int(pl->Get_Pos().x / ChipX) + (MapSizeX / MapRenPar));
+		ey = min(MapSizeY, int(pl->Get_Pos().y / ChipY) + (MapSizeY / MapRenPar));
+		ez = min(MapSizeZ, int(pl->Get_Pos().z / ChipZ) + (MapSizeZ / MapRenPar));
+		for (int y = sy; y < ey; ++y)
 		{
-			for (int z = 0; z < MapSizeZ; ++z)
+			for (int z = sz; z < ez; ++z)
 			{
-				for (int x = 0; x < MapSizeX; ++x)
+				for (int x = sx; x < ex; ++x)
 				{
-					matT.Translation(this->arr[y][z][x].Get_Pos());
-					DG::EffectState().param.matWorld = matS * matT;
-					switch (this->arr[y][z][x].Get_Type())
+					if (this->arr[y][z][x].Check_Rendering())
 					{
-
+						this->arr[y][z][x].Render3D();
 					}
 				}
 			}
 		}
+
+	}
+	//-------------------------------------------------------------------
+	//マップチップの読み込み
+	bool Object::MapChip_Load(const string filePath)
+	{
+		ifstream fin(filePath);
+		if (!fin)// 
+		{
+			return false;
+		}
+		
+		return false;
 	}
 	//-------------------------------------------------------------------
 	//マップの読み込み
-	bool Object::Map_Load(const string& filePath, int y)
+	bool Object::Map_Load(const string filePath)
 	{
 		ifstream fin(filePath);
 		if (!fin)//読み込み失敗
@@ -112,36 +144,44 @@ namespace Map3D
 		fin >> this->fPath;
 		
 		int in = 0;
-		for (int z = 0; z < MapSizeZ; ++z)
+		for (int y = 0; y < MapSizeY; ++y)
 		{
-			for (int x = 0; x < MapSizeX; ++x)
+			for (int z = 0; z < MapSizeZ; ++z)
 			{
-				fin >> in;
-
-				ML::Vec3 pos(x * ChipX, y * ChipY, z * ChipZ);
-				ML::Box3D hitBase(0, 0, 0, ChipX, ChipY, ChipZ);
-
-				switch ((BoxType)in)
+				for (int x = 0; x < MapSizeX; ++x)
 				{
-				case BoxType::floor:
-				case BoxType::ceiling:
-				case BoxType::wall:
-				case BoxType::stairs:
-				case BoxType::goal:
-					this->arr[y][z][x].Initialize_Box(pos, hitBase, in);
-					break;
-				case BoxType::start:
-					auto pl = Player::Object::Create(true);
-					pl->Set_Pos(pos + ML::Vec3(ChipX / 2, ChipY / 2, ChipZ / 2));
+					fin >> in;
+
+					ML::Vec3 pos(float(x) * ChipX, float(y) * ChipY, float(z) * ChipZ);
+					ML::Box3D hitBase(0, 0, 0, ChipX, ChipY, ChipZ);
+
+					switch ((BoxType)in)
+					{
+					case BoxType::box:
+						this->arr[y][z][x].Initialize_Box(pos, hitBase, in);
+						this->arr[y][z][x].Set_MeshName("Box");
+						break;
+					case BoxType::stairs:
+						this->arr[y][z][x].Initialize_Box(pos, hitBase, in);
+						this->arr[y][z][x].Set_MeshName("Stairs");
+						break;
+					case BoxType::goal:
+						this->arr[y][z][x].Initialize_Box(pos, hitBase, in);
+						break;
+					case BoxType::start:
+						auto pl = Player::Object::Create(true);
+						pl->Set_Pos(pos + ML::Vec3(ChipX / 2, ChipY / 2, ChipZ / 2));
+					}
 				}
 			}
 		}
+		return true;
 	}
 	//-------------------------------------------------------------------
 	//あたり判定
 	bool Object::Map_HitCheck(const ML::Box3D& hit)
 	{
-
+		return false;
 	}
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 	//以下は基本的に変更不要なメソッド
