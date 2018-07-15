@@ -13,7 +13,7 @@
 #define MapSizeY 15
 #define MapSizeZ 20
 
-#define MapRenPar 5
+#define MapRenPar 4
 
 //-----------------------------------------------------------------------------------------------
 namespace  MyPG

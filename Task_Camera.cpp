@@ -62,7 +62,7 @@ namespace Camera
 	void  Object::UpDate()
 	{
 		auto pl = ge->GetTask_One_G<Player::Object>("ƒvƒŒƒCƒ„");
-		ge->camera[0]->pos = pl->Get_Pos() + ML::Vec3(-1000, 800, 0);
+		ge->camera[0]->pos = pl->Get_Pos() + ML::Vec3(10, 800, 0);
 		ge->camera[0]->target = pl->Get_Pos();
 	}
 	//-------------------------------------------------------------------

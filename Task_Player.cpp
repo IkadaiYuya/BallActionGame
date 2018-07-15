@@ -64,8 +64,13 @@ namespace Player
 
 		if (in.LStick.volume > 0)
 		{
-			this->pos.x -= in.LStick.axis.y * 5;
-			this->pos.z -= in.LStick.axis.x * 5;
+			this->pos.x += in.LStick.axis.y * 10;
+			this->pos.z += in.LStick.axis.x * 10;
+			this->angle.x = in.LStick.volume * 10;
+		}
+		if (in.RStick.volume > 0)
+		{
+
 		}
 
 	}
@@ -100,7 +105,9 @@ namespace Player
 	//アニメーション
 	void Object::Anim_Player()
 	{
-
+		ML::Mat4x4 matRX, matRY;
+		matRX.RotationX(ML::ToRadian(this->angle.x));
+		matRY.RotationY(ML::ToRadian(this->angle.y));
 	}
 	//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 	//以下は基本的に変更不要なメソッド
